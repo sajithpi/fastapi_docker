@@ -1,0 +1,74 @@
+version: '3'
+services:
+  app:
+    build: .
+    # depends_on:
+    #   - db
+    restart : always
+    ports:
+      - 8001:8001
+    environment:
+      - DATABASE_HOSTNAME=db
+      - DATABASE_PORT=3306
+      - DATABASE_PASSWORD=password
+      - DATABASE_NAME=orm_join
+      - DATABASE_USERNAME=root
+    volumes:
+      - ./app:/usr/src/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001
+  db:
+    image: mysql:8.0.28
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+        - ./app/database:/var/lib/mysql
+    ports:
+            - '8000:3306'
+    environment:
+      MYSQL_DATABASE: orm_join
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: user
+      MYSQL_PASSWORD: uspasswrd
+  phpmyadmin:
+      image: phpmyadmin:5
+      ports:
+        - "8081:80"
+      depends_on:
+        - db
+volumes:
+  database:
+  # webserver:
+  #     image: nginx:latest
+  #     ports:
+  #       - '7000:80'
+  #     depends_on:
+  #         - app
+  #         - db
+  #     volumes:
+  #       - ./app/web/conf.d:/etc/nginx/conf.d
+  #     restart: always
+  
+     
+      
+  # app:
+  #   build: .
+  #   ports:
+  #     - 8000:8000
+  #   # volumes:
+  #   #   - ./:/usr/src/app
+  #   # env_file:
+  #   #     - ./.env
+  #   environment:
+  #     - DATABASE_HOSTNAME=localhost
+  #     - DATABASE_PORT=3306
+  #     - DATABASE_PASSWORD=password
+  #     - DATABASE_NAME=orm_join
+  #     - ACCESS_TOKEN_EXPIRE_MINUTES=30
+  #   command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+  #   depends_on:
+  #     - db
+
+
+
+
+    
